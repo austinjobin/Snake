@@ -1,0 +1,4 @@
+﻿  Snake.cpp
+C:\Users\mitut\OneDrive\Documents\GitHub\snake-V1\Snake-V1\Snake-V1\Snake.cpp(19,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\mitut\OneDrive\Documents\GitHub\snake-V1\Snake-V1\Snake-V1\Snake.cpp(284,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Snake-V1.vcxproj -> C:\Users\mitut\OneDrive\Documents\GitHub\snake-V1\Snake-V1\x64\Debug\Snake-V1.exe
