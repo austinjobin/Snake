@@ -1,7 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Debug"
   ],
-  "SelectedNode": "\\Snake-V1.cpp",
+  "SelectedNode": "\\Snake.cpp",
   "PreviewInSolutionExplorer": false
 }

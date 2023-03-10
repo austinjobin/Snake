@@ -1,7 +1,5 @@
 #include "Snake.h"
-#include <iostream>
-#include <conio.h>
-#include<windows.h>
+
 Snake::Snake(int x) {
 	
 	GAMEOVER = 0;
@@ -15,7 +13,7 @@ Snake::Snake(int x) {
 	Hpos.y = SIZE.height/2;
 	Fpos.frX = rand() % (SIZE.width-2)+1;
 	Fpos.frY = rand() % (SIZE.height-2)+1;
-	score = 0;
+	score_int = 0;
 	srand(time(NULL));
 	Tpos.Tx = new int[tailarraysize] {};
 	Tpos.Ty = new int[tailarraysize] {};
@@ -89,7 +87,7 @@ void Snake::draw()
 	for (int i = 0; i < SIZE.width; i++) {
 		std::cout << "# ";
 	}
-	std::cout << std::endl << "Score: " << score;
+	std::cout << std::endl << "Score: " << score_int;
 }
 
 void Snake::input()
@@ -241,24 +239,120 @@ void Snake::eat()
 {
 	if ((Hpos.x == Fpos.frX) && (Hpos.y == Fpos.frY))
 	{
-		score += 10;
+		score_int += 10;
 		Fpos.frX = rand() % (SIZE.width - 2) + 1;
 		Fpos.frY = rand() % (SIZE.height - 2) + 1;
 		++length;
 	}
 }
+
 void Snake::game_over_screen()
 {
 	if (GAMEOVER) {
 		system("cls");
-		std::cout << "GAME OVER\nSCORE: "<<score<<"\nWould you like to play again ? Y / N\n";
+		ss.str("");
+		ss << score_int;
+		Sscore = ss.str();
+		std::cout << "GAME OVER\nEnter first and last name seperated with a space\nSCORE: "
+			<<score_int<<"\n\n";
+		rank_str = HighScore() ;
+		for (int i = 0; i < 5; i++) {
+			std::cout << Hlist.rank[i] << "\t" << Hlist.first_name[i] << "\t"
+				<< Hlist.last_name[i] << "\t" << Hlist.score[i] << std::endl;
+		}
+		std::cout << rank_str << "\t";
+		std::cin >> first_name_str >> last_name_str;
+		std::cout << "\n";
+		std::cout << "\nWould you like to play again ? Y / N\n\n";
 		char responce{};
 		std::cin >> responce;
 		if ((responce == 'y') || (responce == 'Y')) {
 			play = 1;
 		}
+		writeHighScore();
 }
 }
+
+void Snake::writeHighScore()
+{
+	std::ofstream fout("temp.txt");
+	bool flag{ 0 };
+	for (int i = 0; i < Hlist.first_name.size(); i++) {
+		if ((stringtoint(Hlist.rank[i]) > stringtoint(rank_str)) && (!flag)) { 
+			fout << rank_str << " " << first_name_str << " " << last_name_str << " " << Sscore<<"\n";
+			flag = 1;
+		}
+		fout << Hlist.rank[i] << " " << Hlist.first_name[i] << " " << Hlist.last_name[i] << " " << Hlist.score[i] << "\n";
+		
+	}
+	if (!flag) {
+		fout << rank_str << " " << first_name_str << " " << last_name_str << " " << Sscore << "\n";
+	}
+	fout.close();
+	std::remove("HighScore.txt");
+	std::rename("temp.txt", "HighScore.txt");
+}
+int Snake::stringtoint(std::string str)
+{
+	int hold{ 0 };
+	ss.clear(); 
+	ss.str("");
+	ss.str(str);
+	ss >> hold; 
+	return hold; 
+}
+std::string Snake::inttostring(int num)
+{
+	ss.clear();
+	ss.str("");
+	ss << num;
+
+	return ss.str(); 
+}
+std::string Snake::HighScore()
+{
+	std::string holdstr;
+	std::ifstream fin("HighScore.txt");
+	fin >> holdstr; 
+	Hlist.rank.push_back(holdstr);
+	if (fin.is_open()) {
+		while (!fin.eof()) {
+			fin >> holdstr; 
+			Hlist.first_name.push_back(holdstr); 
+			fin >> holdstr;
+			Hlist.last_name.push_back(holdstr); 
+			fin >> holdstr;
+			Hlist.score.push_back(holdstr); 
+			fin >> holdstr;
+			Hlist.rank.push_back(holdstr); 
+		}
+	}
+	else {
+		system("cls");
+		std::cout << "Highscore.txt busted or something idk error_code: fuck you im not doing it today\n";
+	}
+	fin.close(); 
+	int hold{0};
+	int newrank{ 0 };
+	bool flag{ 0 };
+	for (int i{ 0 }; i < Hlist.first_name.size(); i++) {
+		hold = stringtoint(Hlist.score[i]);
+		if ((score_int > hold)&&(!flag)) {
+			newrank = i + 1;
+			flag = true;
+		}
+		if (flag) {
+			hold = stringtoint(Hlist.rank[i]); 
+			hold++;
+			Hlist.rank[i] = inttostring(hold);
+		}
+	}
+	if (newrank == 0) {
+		newrank = Hlist.first_name.size() + 1;
+	}
+	return(inttostring(newrank)); 
+}
+
 bool Snake::gameOver()
 {
 	return GAMEOVER;
@@ -280,8 +374,17 @@ void Snake::RESTART()
 	Hpos.y = SIZE.height / 2;
 	Fpos.frX = rand() % (SIZE.width - 2) + 1;
 	Fpos.frY = rand() % (SIZE.height - 2) + 1;
-	score = 0;
+	score_int = 0;
 	srand(time(NULL));
 	Tpos.Tx = new int[tailarraysize] {};
 	Tpos.Ty = new int[tailarraysize] {};
+	Hlist.first_name.clear();
+	Hlist.last_name.clear();
+	Hlist.rank.clear();
+	Hlist.score.clear();
+	 first_name_str=""; 
+rank_str="";
+	last_name_str="";
+ ss.clear();
+outstr="";
 }
